@@ -1,0 +1,14 @@
+# IDE
+.idea
+.vscode
+
+# Node
+node_modules
+.env
+.env.production
+.env.development
+
+# MacOS
+.DS_Store
+
+vercel.json
