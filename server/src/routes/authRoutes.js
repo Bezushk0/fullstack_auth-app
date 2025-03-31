@@ -17,7 +17,7 @@ const { catchError } = require('../config/catchError');
 const authRouter = new express.Router();
 
 authRouter.post('/registration', catchError(register));
-authRouter.get('/activation/:activationToken', catchError(activate));
+authRouter.get('/activate/:activationToken', catchError(activate));
 authRouter.post('/login', catchError(login));
 authRouter.get('/refresh', catchError(refresh));
 authRouter.post('/logout', catchError(logout));

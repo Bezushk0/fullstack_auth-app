@@ -119,12 +119,12 @@ const login = async (req, res) => {
 const activate = async (req, res) => {
   const { activationToken } = req.params;
 
-  console.log('Activation token received:', activationToken); // <--- ЛОГ
+  console.log('Activation token received:', activationToken);
 
   const user = await User.findOne({ where: { activationToken } });
 
   if (!user) {
-    console.log('User not found with token:', activationToken); // <--- ЛОГ
+    console.log('User not found with token:', activationToken);
 
     return res.sendStatus(404);
   }
