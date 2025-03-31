@@ -118,20 +118,21 @@ const login = async (req, res) => {
 
 const activate = async (req, res) => {
   const { activationToken } = req.params;
+
+  console.log('Activation token received:', activationToken); // <--- ЛОГ
+
   const user = await User.findOne({ where: { activationToken } });
 
   if (!user) {
-    res.sendStatus(404);
+    console.log('User not found with token:', activationToken); // <--- ЛОГ
 
-    return;
+    return res.sendStatus(404);
   }
 
   user.activationToken = null;
-
   await user.save();
 
   await generateTokens(res, user);
-
   res.send(user);
 };
 
