@@ -16,6 +16,8 @@ const client = new Sequelize(process.env.DATABASE_URL, {
   logging: false,
 });
 
+console.log(process.env.DATABASE_URL);
+
 client
   .authenticate()
   .then(() => console.log('✅ PostgreSQL connected'))

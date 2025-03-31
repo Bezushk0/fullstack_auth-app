@@ -28,24 +28,27 @@ const findUserById = (userId) => {
 };
 
 const registerUser = async (name, email, password) => {
-  const activationToken = uuidv4();
+  try {
+    const activationToken = uuidv4();
+    const existUser = await findByEmail(email);
 
-  const existUser = await findByEmail(email);
+    if (existUser) {
+      throw ApiError.badRequest('User already exists', {
+        email: 'User already exists',
+      });
+    }
 
-  if (existUser) {
-    throw ApiError.badRequest('user alredy exist', {
-      email: 'user already exist',
+    await User.create({
+      name,
+      email,
+      password,
+      activationToken,
     });
+
+    await sendActivationEmail(name, email, activationToken);
+  } catch (error) {
+    throw ApiError.internal('Database error', error);
   }
-
-  await User.create({
-    name,
-    email,
-    password,
-    activationToken,
-  });
-
-  await sendActivationEmail(name, email, activationToken);
 };
 
 module.exports = {

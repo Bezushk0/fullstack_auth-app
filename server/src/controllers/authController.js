@@ -81,7 +81,7 @@ const register = async (req, res) => {
   };
 
   if (errors.email || errors.password || errors.name) {
-    throw ApiError('Bad request', errors);
+    throw new ApiError('Bad request', errors);
   }
 
   const hashPass = await bcrypt.hash(password, 10);
