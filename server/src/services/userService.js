@@ -47,7 +47,7 @@ const registerUser = async (name, email, password) => {
 
     await sendActivationEmail(name, email, activationToken);
   } catch (error) {
-    throw ApiError.internal('Database error', error);
+    throw ApiError.internal('Ошибка на сервере', error);
   }
 };
 

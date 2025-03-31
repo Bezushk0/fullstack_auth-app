@@ -29,6 +29,10 @@ class ApiError extends Error {
       status: 404,
     });
   }
+
+  static internal(message = 'Internal Server Error') {
+    return new ApiError(500, message);
+  }
 }
 
 module.exports = {
