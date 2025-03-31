@@ -14,7 +14,7 @@ function logout() {
 }
 
 function activate(activationToken) {
-    return authClient.get(`/activate/${activationToken}`);
+    return authClient.get(`/activation/${activationToken}`);
 }
 
 function refresh() {
