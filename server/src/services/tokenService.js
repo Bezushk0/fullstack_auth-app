@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const { Token } = require('../models/token');
+const { client } = require('../config/db');
 
 // Сохраняем или обновляем токен
 const save = async (userId, newToken) => {
@@ -10,19 +11,33 @@ const save = async (userId, newToken) => {
     throw new Error('User ID is required');
   }
 
-  const token = await Token.findOne({ where: { userId } });
+  // Использование транзакции
+  const t = await client.transaction();
 
-  if (!token) {
-    console.log('No existing token found, creating a new one');
+  try {
+    const token = await Token.findOne({ where: { userId }, transaction: t });
 
-    await Token.create({ userId, refreshToken: newToken });
+    if (!token) {
+      console.log('No existing token found, creating a new one');
 
-    return;
+      await Token.create(
+        { userId, refreshToken: newToken },
+        { transaction: t },
+      );
+    } else {
+      console.log('Token found, updating with new refresh token');
+      token.refreshToken = newToken;
+      await token.save({ transaction: t });
+    }
+
+    // Подтверждение транзакции
+    await t.commit();
+  } catch (error) {
+    // Откат транзакции при ошибке
+    await t.rollback();
+    console.error('Error saving token:', error);
+    throw error; // Перебрасываем ошибку для дальнейшего логирования
   }
-
-  console.log('Token found, updating with new refresh token');
-  token.refreshToken = newToken;
-  await token.save();
 };
 
 // Получаем токен по refreshToken
