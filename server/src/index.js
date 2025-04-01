@@ -14,7 +14,7 @@ const { errorMiddleware } = require('./middlewares/errorMiddleware');
 
 const corsOptions = {
   origin: process.env.CLIENT_HOST,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
