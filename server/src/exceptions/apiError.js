@@ -31,7 +31,10 @@ class ApiError extends Error {
   }
 
   static internal(message = 'Internal Server Error') {
-    return new ApiError(500, message);
+    return new ApiError({
+      message,
+      status: 500,
+    });
   }
 }
 
