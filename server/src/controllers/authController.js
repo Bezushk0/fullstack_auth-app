@@ -69,26 +69,38 @@ const generateTokens = async (res, user) => {
   });
 };
 
-const register = async (req, res) => {
-  console.log('Received registration data:', req.body);
+const register = async (req, res, next) => {
+  try {
+    console.log('Received registration data:', req.body);
 
-  const { name, email, password } = req.body;
+    const { name, email, password } = req.body;
 
-  const errors = {
-    name: validateName(name),
-    email: validateEmail(email),
-    password: validatePassword(password),
-  };
+    const errors = {
+      name: validateName(name),
+      email: validateEmail(email),
+      password: validatePassword(password),
+    };
 
-  if (errors.email || errors.password || errors.name) {
-    throw new ApiError('Bad request', errors);
+    if (errors.email || errors.password || errors.name) {
+      throw new ApiError('Bad request', errors);
+    }
+
+    const existingUser = await User.findOne({ where: { email } });
+
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ message: 'User with this email already exists' });
+    }
+
+    const hashPass = await bcrypt.hash(password, 10);
+
+    await registerUser(name, email, hashPass);
+
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+    next(error);
   }
-
-  const hashPass = await bcrypt.hash(password, 10);
-
-  await registerUser(name, email, hashPass);
-
-  res.send({ message: 'OK' });
 };
 
 const login = async (req, res) => {

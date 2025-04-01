@@ -123,7 +123,7 @@ export const LoginPage = () => {
                             )}
                         </div>
 
-                        <div className="field">
+                        <div className="field field__btn">
                             <button
                                 type="submit"
                                 className={cn("button is-success has-text-weight-bold", {

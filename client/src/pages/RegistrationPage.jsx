@@ -70,18 +70,26 @@ export const RegistrationPage = () => {
                                 setError(error.message);
                             }
 
-                            if (!error.response?.data) {
+                            if (!error.response) {
+                                setError("Something went wrong. Please try again.");
                                 return;
                             }
 
-                            const { errors, message } = error.response.data;
+                            const { status, data } = error.response;
 
-                            formikHelpers.setFieldError("email", errors?.email);
-                            formikHelpers.setFieldError("password", errors?.password);
-                            formikHelpers.setFieldError("name", errors?.name);
+                            if (status === 409) {
+                                formikHelpers.setFieldError("email", "User with this email already exists");
+                                return;
+                            }
 
-                            if (message) {
-                                setError(message);
+                            if (data.errors) {
+                                formikHelpers.setFieldError("email", data.errors.email);
+                                formikHelpers.setFieldError("password", data.errors.password);
+                                formikHelpers.setFieldError("name", data.errors.name);
+                            }
+
+                            if (data.message) {
+                                setError(data.message);
                             }
                         })
                         .finally(() => {
@@ -189,7 +197,7 @@ export const RegistrationPage = () => {
                             </div>
                         </div>
 
-                        <div className="field">
+                        <div className="field field__btn">
                             <button
                                 type="submit"
                                 className={cn("button is-success has-text-weight-bold", {
