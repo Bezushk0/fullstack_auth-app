@@ -29,7 +29,7 @@ const validatePassword = (value) => {
         return 'Password is required';
     }
 
-    if (value.length < 3) {
+    if (value.length < 6) {
         return 'At least 6 characters'
     }
 }
@@ -78,7 +78,7 @@ export const RegistrationPage = () => {
                             const { status, data } = error.response;
 
                             if (status === 409) {
-                                formikHelpers.setFieldError("email", "User with this email already exists");
+                                setError("User with this email already exists");
                                 return;
                             }
 

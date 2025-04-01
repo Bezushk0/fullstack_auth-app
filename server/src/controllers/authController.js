@@ -151,23 +151,32 @@ const activate = async (req, res) => {
 };
 
 const refresh = async (req, res) => {
-  const { refreshToken } = req.cookies;
+  const { refreshToken } = req.body;
 
-  const userData = await verifyRefresh(refreshToken);
+  console.log('Fetching token with refreshToken:', refreshToken);
 
-  if (!userData) {
-    throw ApiError.unauthorized();
+  if (!refreshToken) {
+    throw ApiError.unauthorized('No refresh token provided');
   }
 
-  const token = await getByToken(refreshToken);
+  const tokenData = await getByToken(refreshToken);
 
-  if (!token) {
-    throw ApiError.unauthorized();
+  if (!tokenData) {
+    console.log('Token not found in DB!');
+    throw ApiError.unauthorized('Unauthorized user');
   }
 
-  const user = await findByEmail(userData.email);
+  const user = await User.findByPk(tokenData.userId);
 
-  await generateTokens(res, user);
+  if (!user) {
+    console.log('User not found!');
+
+    throw ApiError.unauthorized('Unauthorized user');
+  }
+
+  const accessToken = generateTokens(user);
+
+  res.json({ accessToken });
 };
 
 const logout = async (req, res) => {

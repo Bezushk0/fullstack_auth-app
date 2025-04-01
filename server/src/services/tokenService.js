@@ -2,7 +2,6 @@
 const { Token } = require('../models/token');
 const { client } = require('../config/db');
 
-// Сохраняем или обновляем токен
 const save = async (userId, newToken) => {
   console.log('Saving token for userId:', userId);
   console.log('New token:', newToken);
@@ -11,7 +10,6 @@ const save = async (userId, newToken) => {
     throw new Error('User ID is required');
   }
 
-  // Использование транзакции
   const t = await client.transaction();
 
   try {
@@ -30,17 +28,14 @@ const save = async (userId, newToken) => {
       await token.save({ transaction: t });
     }
 
-    // Подтверждение транзакции
     await t.commit();
   } catch (error) {
-    // Откат транзакции при ошибке
     await t.rollback();
     console.error('Error saving token:', error);
-    throw error; // Перебрасываем ошибку для дальнейшего логирования
+    throw error;
   }
 };
 
-// Получаем токен по refreshToken
 const getByToken = (refreshToken) => {
   if (!refreshToken) {
     throw new Error('Refresh token is required');
@@ -51,7 +46,6 @@ const getByToken = (refreshToken) => {
   return Token.findOne({ where: { refreshToken } });
 };
 
-// Удаляем токен
 const remove = (userId) => {
   if (!userId) {
     throw new Error('User ID is required');
