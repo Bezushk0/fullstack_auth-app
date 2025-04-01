@@ -129,6 +129,8 @@ const activate = async (req, res) => {
     return res.sendStatus(404);
   }
 
+  console.log('User found:', user);
+
   user.activationToken = null;
   await user.save();
 
